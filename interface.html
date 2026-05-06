@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Catraca — Cartão Mobilidade</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 18px;
+            background: #1e2937;
+            border-bottom: 1px solid #334155;
+        }
+
+        .title {
+            font-size: 26px;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .app-container {
+            display: flex;
+            height: calc(100vh - 75px);
+            padding: 15px;
+            gap: 15px;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-cards {
+            display: flex;
+            gap: 12px;
+        }
+
+        .card {
+            background: #334155;
+            padding: 12px 18px;
+            border-radius: 8px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .card-label {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .card-value {
+            font-size: 21px;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .bus-container {
+            background: #1e2937;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .bus {
+            background: #22d3ee;
+            width: 420px;
+            height: 155px;
+            margin: 0 auto;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .bus::before {
+            content: "LINHA 042 - CENTRO";
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: white;
+            padding: 4px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .wheel {
+            position: absolute;
+            bottom: -18px;
+            width: 48px;
+            height: 48px;
+            background: #0f172a;
+            border-radius: 50%;
+            border: 6px solid #64748b;
+        }
+
+        .wheel-left {
+            left: 80px;
+        }
+
+        .wheel-right {
+            right: 80px;
+        }
+
+        .rfid-section {
+            background: #1e2937;
+            padding: 18px;
+            border-radius: 12px;
+        }
+
+        .log-container {
+            width: 380px;
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .log-header {
+            color: #67e8f9;
+            margin-bottom: 8px;
+            font-family: monospace;
+        }
+
+        #log {
+            flex: 1;
+            background: #020617;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.55;
+            color: #86efac;
+            overflow-y: auto;
+        }
+
+        .code-section {
+            padding: 0 15px 15px;
+            display: flex;
+            gap: 15px;
+            height: 260px;
+        }
+
+        .code-panel {
+            flex: 1;
+            background: #1e2937;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #334155;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .code-title {
+            color: #67e8f9;
+            font-weight: bold;
+        }
+
+        .lang-tag {
+            background: #334155;
+            padding: 2px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+        }
+
+        pre {
+            flex: 1;
+            overflow-y: auto;
+            font-size: 12.8px;
+            line-height: 1.45;
+            color: #e2e8f0;
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1 class="title">Sistema de Catraca — Cartão Mobilidade</h1>
+        <p class="subtitle">Núcleo transacional em COBOL • Ponte de hardware em C++ • Sensores IoT</p>
+    </div>
+
+    <div class="app-container">
+        <div class="main">
+            <div class="info-cards">
+                <div class="card">
+                    <div class="card-label">SALDO</div>
+                    <div class="card-value" id="saldo">R$ 20.00</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">TARIFA</div>
+                    <div class="card-value">R$ 4.50</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">PASSAGEIROS</div>
+                    <div class="card-value" id="passageiros">0</div>
+                </div>
+            </div>
+
+            <div class="bus-container">
+                <div class="bus">
+                    <div class="wheel wheel-left"></div>
+                    <div class="wheel wheel-right"></div>
+                </div>
+            </div>
+
+            <div class="rfid-section">
+                <h3>LEITOR RFID</h3>
+                <p><span style="color:#22d3ee;">●</span> Aguardando cartão...</p>
+
+                <div style="margin:15px 0 10px;">
+                    <input type="text" id="cartaoInput" value="12345"
+                        style="width:280px; padding:12px; background:#0f172a; border:1px solid #475569; color:white; border-radius:8px;">
+                    <button onclick="passarCartao()"
+                        style="padding:12px 24px; background:#22d3ee; color:#0f172a; border:none; border-radius:8px; font-weight:bold;">Passar
+                        Cartão</button>
+                </div>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <div onclick="usarCartao('12345')"
+                        style="background:#334155; padding:8px 16px; border-radius:9999px; cursor:pointer;">Cartão 12345
+                    </div>
+                    <div onclick="usarCartao('99999')"
+                        style="background:#334155; padding:8px 16px; border-radius:9999px; cursor:pointer;">Cartão 99999
+                    </div>
+                    <div onclick="recarregar()"
+                        style="background:#334155; padding:8px 16px; border-radius:9999px; cursor:pointer;">+ Recarregar
+                        R$ 10</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="log-container">
+            <div class="log-header">cobol-iot-bridge.log</div>
+            <div id="log">
+                21:02:52 [COBOL] MOBILITY-CARD-SYS v1.0 iniciado<br>
+                21:02:52 [C++] IoT bridge conectado @ /dev/ttyS0<br>
+                21:02:52 [IoT] Sensor RFID online — aguardando leitura<br>
+            </div>
+        </div>
+    </div>
+
+    <!-- Painéis de Código -->
+    <div class="code-section">
+        <div class="code-panel">
+            <div class="code-header">
+                <div class="code-title">MOBILITY-CARD.cbl</div>
+                <div class="lang-tag">COBOL</div>
+            </div>
+            <pre>IDENTIFICATION DIVISION.
+PROGRAM-ID. MOBILITY-CARD.
+
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-CARTAO       PIC X(08).
+01 WS-SALDO        PIC 9(05)V99 VALUE 20.00.
+01 WS-TARIFA       PIC 9(03)V99 VALUE 04.50.
+01 WS-STATUS       PIC 9(02).
+
+PROCEDURE DIVISION.
+    PERFORM LER-CARTAO.
+    PERFORM VALIDAR-CARTAO.
+    STOP RUN.
+
+LER-CARTAO.
+    ACCEPT WS-CARTAO.
+
+VALIDAR-CARTAO.
+    IF WS-CARTAO = "12345"
+        IF WS-SALDO >= WS-TARIFA
+            SUBTRACT WS-TARIFA FROM WS-SALDO
+            DISPLAY "[COBOL] ✅ Passagem liberada! Saldo: " WS-SALDO
+        ELSE
+            DISPLAY "[COBOL] ❌ Saldo insuficiente!"
+        END-IF
+    ELSE
+        DISPLAY "[COBOL] ❌ Cartão inválido!"
+    END-IF.</pre>
+        </div>
+
+        <div class="code-panel">
+            <div class="code-header">
+                <div class="code-title">iot_bridge.cpp</div>
+                <div class="lang-tag">C++</div>
+            </div>
+            <pre>// Ponte IoT entre COBOL e hardware da catraca
+#include <iostream>
+#include <string>
+
+extern "C" void CPP_IOT_READ(char* card) {
+    std::cout << "[C++] Cartão lido: " << card << std::endl;
+}
+
+extern "C" void CPP_LIBERA_CATRACA() {
+    std::cout << "[C++] Catraca liberada - Servo girando" << std::endl;
+}
+
+int main() {
+    std::cout << "[C++] IoT Bridge iniciado..." << std::endl;
+    return 0;
+}</pre>
+        </div>
+    </div>
+
+    <script>
+        let saldo = 20.00;
+        let passageiros = 0;
+
+        function log(msg) {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString('pt-BR');
+            logDiv.innerHTML += `${time} ${msg}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function passarCartao() {
+            const numero = document.getElementById('cartaoInput').value.trim();
+            if (numero) processarCartao(numero);
+        }
+
+        function usarCartao(numero) {
+            document.getElementById('cartaoInput').value = numero;
+            processarCartao(numero);
+        }
+
+        function processarCartao(numero) {
+            log(`[RFID] Cartão lido → <b>${numero}</b>`);
+            if (numero === "12345") {
+                if (saldo >= 4.50) {
+                    saldo -= 4.50;
+                    passageiros++;
+                    document.getElementById('saldo').textContent = `R$ ${saldo.toFixed(2)}`;
+                    document.getElementById('passageiros').textContent = passageiros;
+                    log(`[COBOL] ✅ Passagem liberada! Saldo: <b>R$ ${saldo.toFixed(2)}</b>`);
+                } else {
+                    log(`[COBOL] ❌ Saldo insuficiente!`);
+                }
+            } else {
+                log(`[COBOL] ❌ Cartão inválido.`);
+            }
+        }
+
+        function recarregar() {
+            saldo += 10;
+            document.getElementById('saldo').textContent = `R$ ${saldo.toFixed(2)}`;
+            log(`[COBOL] 💰 Recarga de R$ 10,00 realizada.`);
+        }
+    </script>
+</body>
+
+</html>
